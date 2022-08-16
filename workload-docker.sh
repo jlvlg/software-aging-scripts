@@ -95,10 +95,20 @@ echo "$message,date,time" | tee $log_arquivo
 echo "reason,date,time" > $log_erro
 
 count=0
-while [ $count -lt 300 ]; do
+if [ $remove_image = "true" ]; then
+    repetitions=300
+else
+    repetitions=2400
+fi
+
+while [ $count -lt $repetitions ]; do
     count=$((count+1))
     if add_container; then
-        sleep 80
+        if [ $remove_image = "true" ]; then
+            sleep 80
+        else
+            sleep 10
+        fi
         if remove_container; then
             get_date_time
             message="$instantiate_time,$stop_time,$container_removal_time"
@@ -108,5 +118,9 @@ while [ $count -lt 300 ]; do
             echo "$message,$current_date,$current_time" | tee -a $log_arquivo
         fi
     fi
-    sleep 160
+    if [ $remove_image =  "true" ]; then
+        sleep 160
+    else
+        sleep 20
+    fi
 done

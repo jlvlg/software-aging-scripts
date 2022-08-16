@@ -2,10 +2,27 @@
 
 imagem="ubuntu"
 remove_image="false"
+repetitions=0
 array_containers=()
 
-while getopts 'r' flag; do
+function is_number() {
+    local re='^[0-9]+$'
+    if ! [[ $1 =~ $re ]] ; then
+        return 1
+    fi
+    return 0
+}
+
+while getopts ':ri:' flag; do
     case $flag in 
+        i) 
+            if ! is_number $OPTARG ; then 
+                echo "script usage $(basename $0) [-i <integer>]" >&2
+                exit 1
+            fi
+
+            repetitions=$OPTARG 
+            ;;
         r) remove_image="true" ;;
         ?) 
             echo "script usage $(basename $0) [-r]" >&2
@@ -78,27 +95,27 @@ function remove_container() {
 mkdir -p logs
 get_date_time
 
+log_erro="logs/log-erro-$imagem-$current_date-$current_time.csv"
+message="instantiate_time,stop_time,container_removal_time"
+
 if [ $remove_image = "true" ]; then
     log_arquivo="logs/log-rmi-$imagem-$current_date-$current_time.csv"
+    message="pull_time,$message,image_removal_time,date,time"
 else
     log_arquivo="logs/log-$imagem-$current_date-$current_time.csv"
 fi
 
-log_erro="logs/log-erro-$imagem-$current_date-$current_time.csv"
-
-message="instantiate_time,stop_time,container_removal_time"
-if [ $remove_image = "true" ]; then
-    message="pull_time,$message,image_removal_time,date,time"
-fi
-echo "$message,date,time" | tee $log_arquivo
-
+echo "$message,date,time" > $log_arquivo
 echo "reason,date,time" > $log_erro
 
 count=0
-if [ $remove_image = "true" ]; then
-    repetitions=300
-else
-    repetitions=2400
+
+if [ $repetitions -eq 0 ]; then
+    if [ $remove_image = "true" ]; then
+        repetitions=300
+    else
+        repetitions=2400
+    fi
 fi
 
 while [ $count -lt $repetitions ]; do

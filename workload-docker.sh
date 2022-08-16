@@ -26,7 +26,7 @@ function add_container() {
         if ! docker pull $imagem >/dev/null; then
             get_date_time
             echo "Falha ao fazer o download da imagem $imagem,$current_date,$current_time" | tee -a $log_erro
-            return $?
+            return 1
         fi
         pull_time=$(($(date +%s%N) - start))
     fi
@@ -35,7 +35,7 @@ function add_container() {
     if ! container=$(docker run -d $imagem); then
         get_date_time
         echo "Falha ao instanciar a imagem $imagem,$current_date,$current_time" | tee -a $log_erro
-        return $?
+        return 1
     fi
     instantiate_time=$(($(date +%s%N) - start))
 
@@ -49,7 +49,7 @@ function remove_container() {
         if ! docker stop $t >/dev/null; then
             get_date_time
             echo "Falha ao parar o container,$current_date,$current_time" | tee -a $log_erro
-			return $?
+			return 1
 		fi
         stop_time=$(($(date +%s%N) - start))
 
@@ -57,7 +57,7 @@ function remove_container() {
         if ! docker rm $t >/dev/null; then
             get_date_time
             echo "Falha ao remover o container,$current_date,$current_time" | tee -a $log_erro
-			return $?
+			return 1
 		fi
         container_removal_time=$(($(date +%s%N) - start))
 
@@ -66,7 +66,7 @@ function remove_container() {
             if ! docker rmi $imagem >/dev/null; then
                 get_date_time
                 echo "Falha ao remover imagem $imagem,$current_date,$current_time" | tee -a $log_erro
-                return $?
+                return 1
             fi
             image_removal_time=$(($(date +%s%N) - start))
         fi

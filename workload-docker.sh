@@ -23,7 +23,7 @@ function get_date_time() {
 function add_container() {
     if ! docker images | grep -q $imagem; then
         start=$(date +%s%N)
-        if ! docker pull $imagem >/dev/null; then
+        if ! docker pull $imagem >/dev/null 2>&1; then
             get_date_time
             echo "Falha ao fazer o download da imagem $imagem,$current_date,$current_time" | tee -a $log_erro
             return 1
@@ -46,7 +46,7 @@ function add_container() {
 function remove_container() {
     for t in ${array_containers[@]}; do
         start=$(date +%s%N)
-        if ! docker stop $t >/dev/null; then
+        if ! docker stop $t >/dev/null 2>&1; then
             get_date_time
             echo "Falha ao parar o container,$current_date,$current_time" | tee -a $log_erro
 			return 1
@@ -54,7 +54,7 @@ function remove_container() {
         stop_time=$(($(date +%s%N) - start))
 
         start=$(date +%s%N)
-        if ! docker rm $t >/dev/null; then
+        if ! docker rm $t >/dev/null 2>&1; then
             get_date_time
             echo "Falha ao remover o container,$current_date,$current_time" | tee -a $log_erro
 			return 1
@@ -63,7 +63,7 @@ function remove_container() {
 
         if [ $remove_image = "true" ]; then
             start=$(date +%s%N)
-            if ! docker rmi $imagem >/dev/null; then
+            if ! docker rmi $imagem >/dev/null 2>&1; then
                 get_date_time
                 echo "Falha ao remover imagem $imagem,$current_date,$current_time" | tee -a $log_erro
                 return 1

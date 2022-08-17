@@ -1,6 +1,6 @@
 #!/bin/bash
 
-imagem="ubuntu"
+imagem="swift"
 remove_image="false"
 repetitions=0
 array_containers=()
@@ -13,11 +13,12 @@ function is_number() {
     return 0
 }
 
-while getopts ':ri:' flag; do
-    case $flag in 
+while getopts 'ri:n:' flag; do
+    case $flag in
+        n) imagem=$OPTARG ;;
         i) 
             if ! is_number $OPTARG ; then 
-                echo "script usage $(basename $0) [-i <integer>]" >&2
+                echo "script usage $(basename $0) [-r] [-i <integer>] [-n <image name>]" >&2
                 exit 1
             fi
 
@@ -25,7 +26,7 @@ while getopts ':ri:' flag; do
             ;;
         r) remove_image="true" ;;
         ?) 
-            echo "script usage $(basename $0) [-r]" >&2
+            echo "script usage $(basename $0) [-r] [-i <integer>] [-n <image name>]" >&2
             exit 1
             ;;
     esac

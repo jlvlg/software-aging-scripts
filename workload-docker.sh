@@ -96,17 +96,17 @@ function remove_container() {
 mkdir -p logs
 get_date_time
 
-log_erro="logs/log-erro-$imagem-$current_date-$current_time.csv"
+log_erro="logs/log-erro-docker-$imagem-$current_date-$current_time.csv"
 message="instantiate_time,stop_time,container_removal_time"
 
 if [ $remove_image = "true" ]; then
-    log_arquivo="logs/log-rmi-$imagem-$current_date-$current_time.csv"
-    message="pull_time,$message,image_removal_time,date,time"
+    log_arquivo="logs/log-docker-rmi-$imagem-$current_date-$current_time.csv"
+    message="pull_time,$message,image_removal_time"
 else
     log_arquivo="logs/log-$imagem-$current_date-$current_time.csv"
 fi
 
-echo "$message,date,time" > $log_arquivo
+echo "count,$message,date,time" | tee $log_arquivo
 echo "reason,date,time" > $log_erro
 
 count=0
@@ -133,7 +133,7 @@ while [ $count -lt $repetitions ]; do
             if [ $remove_image = "true" ]; then
                 message="$pull_time,$message,$image_removal_time"
             fi
-            echo "$message,$current_date,$current_time" | tee -a $log_arquivo
+            echo "$count,$message,$current_date,$current_time" | tee -a $log_arquivo
         fi
     fi
     if [ $remove_image =  "true" ]; then

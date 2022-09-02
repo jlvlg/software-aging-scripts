@@ -12,7 +12,7 @@ function is_number() {
     return 0
 }
 
-while getopts 'r:i:a:s:' flag; do
+while getopts 'r:i:s:' flag; do
     case $flag in
     i) imagem=$OPTARG ;;
     s) imagemsrc=$OPTARG ;;

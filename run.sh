@@ -107,6 +107,7 @@ for script in "$@"; do
     done
     printf "\n"
     echo "Teste finalizado com $errcount erros em $(($(date +%s) - scriptstart)) segundos"
+    echo ""
 done
 
 echo "Todos os testes finalizados"

@@ -63,7 +63,7 @@ for script in "$@"; do
         echo "count,instantiate_time,stop_time,container_removal_time,date,time" >$log_arquivo
     fi
 
-    echo "reason,date,time" >$log_erro
+    echo "message,reason,date,time" >$log_erro
 
     count=0
     errcount=0

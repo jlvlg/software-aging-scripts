@@ -6,20 +6,20 @@ function add_container() {
 
     if ! podman images | grep -q $imagem; then
         start=$(date +%s%N)
-        if ! podman pull $imagem >/dev/null 2>&1; then
+        if ! podman pull $imagem >/dev/null 2>/tmp/ERROR; then
             errcount=$((errcount + 1))
             get_date_time
-            echo "Falha ao fazer o download da imagem $imagem,$current_date,$current_time" >>$log_erro
+            echo "Falha ao fazer o download da imagem $imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
             return 1
         fi
         pull_time=$(($(date +%s%N) - start))
     fi
 
     start=$(date +%s%N)
-    if ! container=$(podman run -d $imagem); then
+    if ! container=$(podman run -d $imagem 2>/tmp/ERROR); then
         errcount=$((errcount + 1))
         get_date_time
-        echo "Falha ao instanciar a imagem $imagem,$current_date,$current_time" >>$log_erro
+        echo "Falha ao instanciar a imagem $imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
         return 1
     fi
     instantiate_time=$(($(date +%s%N) - start))
@@ -33,28 +33,28 @@ function remove_container() {
     image_removal_time=0
 
     start=$(date +%s%N)
-    if ! podman stop $container >/dev/null 2>&1; then
+    if ! podman stop $container >/dev/null 2>/tmp/ERROR; then
         errcount=$((errcount + 1))
         get_date_time
-        echo "Falha ao parar o container,$current_date,$current_time" >>$log_erro
+        echo "Falha ao parar o container,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
         return 1
     fi
     stop_time=$(($(date +%s%N) - start))
 
     start=$(date +%s%N)
-    if ! podman rm $container >/dev/null 2>&1; then
+    if ! podman rm $container >/dev/null 2>/tmp/ERROR; then
         errcount=$((errcount + 1))
         get_date_time
-        echo "Falha ao remover o container,$current_date,$current_time" >>$log_erro
+        echo "Falha ao remover o container,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
         return 1
     fi
     container_removal_time=$(($(date +%s%N) - start))
 
     start=$(date +%s%N)
-    if ! podman rmi $imagem >/dev/null 2>&1; then
+    if ! podman rmi $imagem >/dev/null 2>/tmp/ERROR; then
         errcount=$((errcount + 1))
         get_date_time
-        echo "Falha ao remover imagem $imagem,$current_date,$current_time" >>$log_erro
+        echo "Falha ao remover imagem $imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
         return 1
     fi
     image_removal_time=$(($(date +%s%N) - start))

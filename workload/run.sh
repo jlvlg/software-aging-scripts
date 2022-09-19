@@ -12,6 +12,11 @@ function is_number() {
     return 0
 }
 
+replace_slash() {
+    echo $1 | sed 's/\//-/g'
+}
+
+
 while getopts 'r:i:s:' flag; do
     case $flag in
     i) imagem=$OPTARG ;;
@@ -54,8 +59,8 @@ for script in "$@"; do
     mkdir -p "logs/$script"
     get_date_time
 
-    log_erro="logs/$script/log-erro-$script-${imagem//./_}-${current_date}_$current_time.csv"
-    log_arquivo="logs/$script/log-$script-${imagem//./_}-${current_date}_$current_time.csv"
+    log_erro="logs/$script/log-erro-$script-${imagem//\//\-}-${current_date}_$current_time.csv"
+    log_arquivo="logs/$script/log-$script-${imagem//\//\-}-${current_date}_$current_time.csv"
 
     if [ $rmi -eq 0 ]; then
         echo "count,pull_time,instantiate_time,stop_time,container_removal_time,image_removal_time,date,time" >$log_arquivo

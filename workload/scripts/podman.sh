@@ -3,20 +3,20 @@
 function add_container() {
     instantiate_time=0
 
-    if ! podman images | grep -q $imagem; then
+    if ! podman images | grep -q $imagemsrc$imagem; then
         if ! podman pull $imagemsrc$imagem >/dev/null 2>/tmp/ERROR; then
             errcount=$((errcount + 1))
             get_date_time
-            echo "Falha ao fazer o download da imagem $imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
+            echo "Falha ao fazer o download da imagem $imagemsrc$imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
             return 1
         fi
     fi
 
     start=$(date +%s%N)
-    if ! container=$(podman run $imagem -d 2>/tmp/ERROR); then
+    if ! container=$(podman run -d $imagemsrc$imagem  2>/tmp/ERROR); then
         errcount=$((errcount + 1))
         get_date_time
-        echo "Falha ao instanciar a imagem $imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
+        echo "Falha ao instanciar a imagem $imagemsrc$imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
         return 1
     fi
     instantiate_time=$(($(date +%s%N) - start))

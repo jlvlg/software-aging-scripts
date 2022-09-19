@@ -6,7 +6,7 @@ function add_container() {
 
     if ! lxc image list | grep -q $imagem; then
         start=$(date +%s%N)
-        if ! lxc image copy $imagemsrc:$imagem local: --alias $imagem >/dev/null 2>/tmp/ERROR; then
+        if ! lxc image copy $imagemsrc local: --alias $imagem >/dev/null 2>/tmp/ERROR; then
             errcount=$((errcount + 1))
             get_date_time
             echo "Falha ao fazer o download da imagem $imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro

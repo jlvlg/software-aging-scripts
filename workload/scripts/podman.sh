@@ -13,7 +13,7 @@ function add_container() {
     fi
 
     start=$(date +%s%N)
-    if ! container=$(podman run -d 2>/tmp/ERROR); then
+    if ! container=$(podman run $imagem -d 2>/tmp/ERROR); then
         errcount=$((errcount + 1))
         get_date_time
         echo "Falha ao instanciar a imagem $imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro

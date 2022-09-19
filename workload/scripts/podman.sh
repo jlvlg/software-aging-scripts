@@ -4,7 +4,7 @@ function add_container() {
     instantiate_time=0
 
     if ! podman images | grep -q $imagem; then
-        if ! podman pull $imagem >/dev/null 2>/tmp/ERROR; then
+        if ! podman pull $imagemsrc$imagem >/dev/null 2>/tmp/ERROR; then
             errcount=$((errcount + 1))
             get_date_time
             echo "Falha ao fazer o download da imagem $imagem,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro

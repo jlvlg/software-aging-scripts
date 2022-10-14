@@ -4,7 +4,7 @@ function add_container() {
   pull_time=0
   instantiate_time=0
 
-  if ! podman images | grep -q $imagemsrc; then
+  if ! podman images | grep -q $imagem; then
     start=$(date +%s%N)
     if ! podman pull $imagemsrc >/dev/null 2>/tmp/ERROR; then
       hasError=1

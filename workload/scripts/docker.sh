@@ -3,7 +3,7 @@
 function add_container() {
   instantiate_time=0
 
-  if ! docker images | grep -q $imagemsrc; then
+  if ! docker images | grep -q $imagem; then
     if ! docker pull $imagemsrc >/dev/null 2>/tmp/ERROR; then
       hasError=1
       return 1

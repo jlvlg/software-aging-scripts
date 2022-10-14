@@ -48,10 +48,11 @@ function progress {
     RED='\033[0;31m'
     BLUE='\033[0;34m'
     NC='\033[0m'
+    GREEN='\033[0;32m'
     if [ $errcount -gt 0 ]; then
-        printf "\r$1 / $2 : ${RED}${_fill// /#}${_empty// /-} ${_progrees}%%${NC} ${errcount} errors"
+        printf "\r$1 / $2 : ${RED}${_fill// /#}${_empty// /-} ${_progrees}%% ${errcount} errors"
     else
-        printf "\r$1 / $2 : ${BLUE}${_fill// /#}${_empty// /-} ${_progrees}%%${NC}"
+        printf "\r$1 / $2 : ${GREEN}${_fill// /#}${_empty// /-} ${_progrees}%%"
     fi
 }
 

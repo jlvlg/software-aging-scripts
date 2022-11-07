@@ -1,8 +1,9 @@
 #!/bin/bash
 
 imagem="ubuntu"
-imagemsrc="ubuntu:"
+imagemsrc="docker.io/"
 repetitions=0
+errcount=0
 
 function is_number() {
     local re='^[0-9]+$'
@@ -44,7 +45,15 @@ function progress {
     _left=$((60 - $_done))
     _fill=$(printf "%${_done}s")
     _empty=$(printf "%${_left}s")
-    printf "\r$1 / $2: ${_fill// /#}${_empty// /-} ${_progrees}%%"
+    RED='\033[0;31m'
+    BLUE='\033[0;34m'
+    NC='\033[0m'
+    GREEN='\033[0;32m'
+    if [ $errcount -gt 0 ]; then
+        printf "\r$1 / $2 : ${RED}${_fill// /#}${_empty// /-} ${_progrees}%% ${errcount} errors${NC}"
+    else
+        printf "\r$1 / $2 : ${GREEN}${_fill// /#}${_empty// /-} ${_progrees}%%${NC}"
+    fi
 }
 
 for script in "$@"; do
@@ -66,8 +75,9 @@ for script in "$@"; do
     echo "message,reason,date,time" >$log_erro
 
     count=0
-    errcount=0
+
     scriptstart=$(date +%s)
+    hasError=0
 
     if [ $repetitions -eq 0 ]; then
         if [ $rmi -eq 0 ]; then
@@ -82,7 +92,7 @@ for script in "$@"; do
     echo "Iniciando o teste $script.sh com $repetitions repetições"
     progress $count $repetitions
     while [ $count -lt $repetitions ]; do
-        count=$((count + 1))
+
         if add_container; then
             if [ $rmi -eq 0 ]; then
                 sleep 80
@@ -103,11 +113,20 @@ for script in "$@"; do
         else
             sleep 20
         fi
+        if [ $hasError -eq 1 ]; then
+            get_date_time
+            echo "Algum erro aconteceu,$(</tmp/ERROR),$current_date,$current_time" >>$log_erro
+            errcount=$((errcount + 1))
+            hasError=0
+        else
+          count=$((count + 1))
+        fi
         progress $count $repetitions
     done
     printf "\n"
     echo "Teste finalizado com $errcount erros em $(($(date +%s) - scriptstart)) segundos"
     echo ""
+    errcount=0
 done
 
 echo "Todos os testes finalizados"
